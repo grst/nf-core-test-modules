@@ -3,8 +3,12 @@
 import org.yaml.snakeyaml.Yaml
 
 nextflow.enable.dsl = 2
+
+//test profile to run
 params.profile = "singularity"
+//path to a local copy of the nf-core modules repository
 params.modules_dir = "/home/sturm/projects/2020/nf-core-modules"
+//output directory
 params.results = "results"
 params.publish_dir_mode = "symlink"
 
@@ -48,7 +52,7 @@ workflow {
     Yaml parser = new Yaml()
     def yaml = parser.load(file("${params.modules_dir}/tests/config/pytest_modules.yml").text)
 
-    test_module(Channel.from(yaml.keySet()).take(2), file(params.modules_dir))
+    test_module(Channel.from(yaml.keySet()), file(params.modules_dir))
 
     test_module.out.success.collectFile(name: "${params.results}/succeeded.txt", sort: true)
     test_module.out.failed.collectFile(name: "${params.results}/failed.txt", sort: true)
