@@ -15,6 +15,8 @@ params.publish_dir_mode = "symlink"
 
 process test_module {
 
+    tag { pytest_tag }
+
     conda "env.yml"
 
     publishDir "${params.results}/logs/${tmp_tag}/", mode: params.publish_dir_mode, pattern: "*.log"
