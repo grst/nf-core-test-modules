@@ -8,7 +8,6 @@ nextflow run main.nf \
   --profile=singularity \
   --modules_dir="/home/sturm/projects/2020/nf-core-modules" \
   --results=$RESULTS_DIR \
-  -resume \
-  -profile icbi
+  -profile icbi_long
 
 

@@ -39,7 +39,7 @@ process test_module {
     CWD=\$(pwd)
     PYTEST_WORKFLOW_DIR=\$(pwd)/pytest-workflow
     cd $modules_dir && \\
-    NF_CORE_MODULES_TEST=1 PROFILE=${params.profile} pytest \\
+    NF_CORE_MODULES_TEST=1 PROFILE=${params.profile} timeout 1800 pytest \\
         --tag $pytest_tag \\
         --symlink --kwd \\
         --basetemp=\$PYTEST_WORKFLOW_DIR 2>&1 > \$CWD/${tmp_tag}.log && \\
@@ -54,7 +54,8 @@ workflow {
     Yaml parser = new Yaml()
     def yaml = parser.load(file("${params.modules_dir}/tests/config/pytest_modules.yml").text)
 
-    test_module(Channel.from(yaml.keySet()), file(params.modules_dir))
+    ch_modules = Channel.from(yaml.keySet()).filter { it -> !it.startsWith("subworkflow") }
+    test_module(ch_modules, file(params.modules_dir))
 
     test_module.out.success.collectFile(name: "${params.results}/succeeded.txt", sort: true)
     test_module.out.failed.collectFile(name: "${params.results}/failed.txt", sort: true)
